@@ -101,16 +101,27 @@ fun ProviderLibraryPage(onBack: () -> Unit, onPlayUrl: (String, String) -> Unit)
                                     else {
                                         loading = true
                                         scope.launch {
-                                            val result = withContext(Dispatchers.IO) { M3ULoader.parseM3U8FromUrl(profile.url) }
-                                            loading = false
-                                            when (result) {
-                                                is Result.Success -> {
-                                                    selected = profile
-                                                    items = result.data.map { XtreamItem(it.id, it.name, it.url, it.group, LibraryKind.LIVE) }
-                                                    categories = result.data.map { it.group }.filter { it.isNotBlank() }.distinct().map { XtreamCategory(it, it) }
-                                                    kind = LibraryKind.LIVE
+                                            try {
+                                                val result = withContext(Dispatchers.IO) { M3ULoader.parseM3U8FromUrl(profile.url) }
+                                                when (result) {
+                                                    is Result.Success -> {
+                                                        if (result.data.isEmpty()) {
+                                                            error = "The playlist loaded but contains no playable entries."
+                                                        } else {
+                                                            selected = profile
+                                                            items = result.data.map { XtreamItem(it.id, it.name, it.url, it.group, LibraryKind.LIVE) }
+                                                            categories = result.data.map { it.group }.filter { it.isNotBlank() }.distinct().map { XtreamCategory(it, it) }
+                                                            selectedCategory = null
+                                                            kind = LibraryKind.LIVE
+                                                            error = null
+                                                        }
+                                                    }
+                                                    is Result.Error -> error = result.message ?: result.exception.message ?: "Could not load M3U playlist"
                                                 }
-                                                is Result.Error -> error = result.message
+                                            } catch (e: Exception) {
+                                                error = e.message ?: "Could not load M3U playlist"
+                                            } finally {
+                                                loading = false
                                             }
                                         }
                                     }
@@ -154,7 +165,7 @@ fun ProviderLibraryPage(onBack: () -> Unit, onPlayUrl: (String, String) -> Unit)
                     }
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        items(items.filter { selected!!.type != ProviderType.M3U || selectedCategory == null || it.categoryId == selectedCategory }, key = { it.id }) { item ->
+                        items(items.filter { selected!!.type != ProviderType.M3U || selectedCategory == null || it.categoryId == selectedCategory }, key = { "${it.id}:${it.streamUrl}" }) { item ->
                             ListItem(
                                 headlineContent = { Text(item.name) },
                                 supportingContent = { if (item.categoryId.isNotBlank()) Text(categories.firstOrNull { it.id == item.categoryId }?.name.orEmpty()) },
@@ -208,7 +219,7 @@ fun ProviderLibraryPage(onBack: () -> Unit, onPlayUrl: (String, String) -> Unit)
                             if (type == ProviderType.XTREAM && !withContext(Dispatchers.IO) { XtreamApi(profile).validateLogin() }) throw IllegalArgumentException("Login failed. Check server URL and credentials.")
                             if (type == ProviderType.M3U) {
                                 val result = withContext(Dispatchers.IO) { M3ULoader.parseM3U8FromUrl(profile.url) }
-                                if (result is Result.Error) throw IllegalArgumentException(result.message)
+                                if (result is Result.Error) throw IllegalArgumentException(result.message ?: result.exception.message ?: "Could not load M3U playlist")
                             }
                             providers = providers + profile
                             store.save(providers)
