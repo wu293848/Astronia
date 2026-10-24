@@ -146,12 +146,6 @@ fun SwipeableCard(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                                     ) {
-                                        if (!logoUrl.isNullOrEmpty()) {
-                                            ChannelLogo(
-                                                logoUrl = logoUrl,
-                                                contentDescription = name
-                                            )
-                                        }
                                         Text(
                                             text = name,
                                             style = MaterialTheme.typography.titleMedium,

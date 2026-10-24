@@ -149,7 +149,7 @@ fun MainScreen(initialNavigation: String = "", viewModel: MainViewModel = viewMo
         NavHost(
                 modifier = Modifier.fillMaxSize(),
                 navController = navController,
-                startDestination = Route.HOME
+                startDestination = Route.PROVIDERS
         ) {
             animatedComposable(Route.HOME) {
                 HomePage(
@@ -165,9 +165,7 @@ fun MainScreen(initialNavigation: String = "", viewModel: MainViewModel = viewMo
                                 popUpTo(Route.HOME)
                             }
                         },
-                        onNavigateToProviders = {
-                            navController.navigate(Route.PROVIDERS) { launchSingleTop = true }
-                        },
+                        onNavigateToProviders = { onNavigateBack() },
                         onPlayUrl = { url ->
                             viewModel.startPlayback(url)
                             navController.navigate(Route.PLAYER) { launchSingleTop = true }
@@ -181,7 +179,15 @@ fun MainScreen(initialNavigation: String = "", viewModel: MainViewModel = viewMo
 
             animatedComposable(Route.PROVIDERS) {
                 ProviderLibraryPage(
-                    onBack = onNavigateBack,
+                    onOpenSettings = {
+                        navController.navigate(Route.SETTINGS) { launchSingleTop = true }
+                    },
+                    onOpenHistory = {
+                        navController.navigate(Route.HISTORY) { launchSingleTop = true }
+                    },
+                    onOpenLink = {
+                        navController.navigate(Route.HOME) { launchSingleTop = true }
+                    },
                     onPlayUrl = { url, title ->
                         viewModel.startPlayback(url, videoTitle = title)
                         navController.navigate(Route.PLAYER) { launchSingleTop = true }

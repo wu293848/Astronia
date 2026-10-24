@@ -66,13 +66,13 @@ class XtreamApi(private val profile: ProviderProfile) {
         val params = if (categoryId.isNullOrBlank()) emptyMap() else mapOf("category_id" to categoryId)
         return parseArray(getJson(apiUrl(action, params))) { obj ->
             val id = when (kind) {
-                LibraryKind.LIVE -> obj.optString("stream_id")
+                LibraryKind.LIVE, LibraryKind.RADIO -> obj.optString("stream_id")
                 LibraryKind.MOVIES -> obj.optString("stream_id")
                 LibraryKind.SERIES -> obj.optString("series_id")
             }
             val ext = obj.optString("container_extension", "mp4").ifBlank { "mp4" }
             val url = when (kind) {
-                LibraryKind.LIVE -> "$baseUrl/live/${profile.username}/${profile.password}/$id.ts"
+                LibraryKind.LIVE, LibraryKind.RADIO -> "$baseUrl/live/${profile.username}/${profile.password}/$id.ts"
                 LibraryKind.MOVIES -> "$baseUrl/movie/${profile.username}/${profile.password}/$id.$ext"
                 LibraryKind.SERIES -> ""
             }

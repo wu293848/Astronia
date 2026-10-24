@@ -149,7 +149,7 @@ internal class PreferenceManagerImpl(context: Context) {
     
     private fun loadThemeSettings(): ThemeSettings {
         return ThemeSettings(
-            themeMode = getInt(KEY_THEME_MODE, 0),
+            themeMode = getInt(KEY_THEME_MODE, 2),
             dynamicColor = getBoolean(KEY_DYNAMIC_COLOR, true),
             seedColor = getInt(KEY_SEED_COLOR, 0xd40054),
             highContrast = getBoolean(KEY_HIGH_CONTRAST, false),
@@ -195,7 +195,7 @@ internal class PreferenceManagerImpl(context: Context) {
     fun getQualityPreference(): Int = getInt(KEY_QUALITY_PREFERENCE, 0)
     fun setQualityPreference(value: Int) = putInt(KEY_QUALITY_PREFERENCE, value)
     
-    fun getThemeMode(): Int = getInt(KEY_THEME_MODE, 0)
+    fun getThemeMode(): Int = getInt(KEY_THEME_MODE, 2)
     fun setThemeMode(value: Int) = updateThemeSettings { it.copy(themeMode = value) }
     
     fun getDynamicColor(): Boolean = getBoolean(KEY_DYNAMIC_COLOR, true)
@@ -385,7 +385,7 @@ internal class PreferenceManagerImpl(context: Context) {
 }
 
 data class ThemeSettings(
-    val themeMode: Int = 0,
+    val themeMode: Int = 2,
     val dynamicColor: Boolean = true,
     val seedColor: Int = 0xd40054,
     val highContrast: Boolean = false,

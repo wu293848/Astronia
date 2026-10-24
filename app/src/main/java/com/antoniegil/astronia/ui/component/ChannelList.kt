@@ -281,7 +281,6 @@ fun ChannelItem(
                 MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
-        var isEpgExpanded by remember { mutableStateOf(false) }
         
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -346,55 +345,6 @@ fun ChannelItem(
                 }
             }
             
-            if (channel.epgPrograms.isNotEmpty()) {
-                val currentTime = System.currentTimeMillis()
-                val upcomingPrograms = remember(channel.epgPrograms) {
-                    channel.epgPrograms.filter { it.stopTime > currentTime }
-                }
-                
-                if (upcomingPrograms.isNotEmpty()) {
-                    val currentProgram = upcomingPrograms.first()
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { isEpgExpanded = !isEpgExpanded }
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 0.dp, bottom = 12.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = currentProgram.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.primary,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Icon(
-                                imageVector = if (isEpgExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                contentDescription = if (isEpgExpanded) "Collapse EPG" else "Expand EPG",
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        
-                        AnimatedVisibility(visible = isEpgExpanded) {
-                            EpgProgramList(
-                                programs = upcomingPrograms.take(10),
-                                selectedDate = null,
-                                scrollable = false,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp)
-                            )
-                        }
-                    }
-                }
-            }
         }
     }
 }

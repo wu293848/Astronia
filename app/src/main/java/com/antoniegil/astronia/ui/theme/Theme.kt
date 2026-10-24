@@ -124,8 +124,9 @@ fun AstroniaTheme(
     val tonalPalettes = LocalTonalPalettes.current
     
     val colorScheme = dynamicColorScheme(!isDarkTheme).run {
-        if (isHighContrastModeEnabled && isDarkTheme) {
-            val trueBlack = Color(0xFF010101)
+        // AMOLED: the dark theme always uses pure black surfaces.
+        if (isDarkTheme) {
+            val trueBlack = Color.Black
             copy(
                 surface = trueBlack,
                 background = trueBlack,

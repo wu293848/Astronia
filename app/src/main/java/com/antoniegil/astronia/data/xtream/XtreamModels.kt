@@ -12,7 +12,7 @@ data class ProviderProfile(
 
 enum class ProviderType { M3U, XTREAM }
 
-enum class LibraryKind { LIVE, MOVIES, SERIES }
+enum class LibraryKind { LIVE, MOVIES, SERIES, RADIO }
 
 data class XtreamCategory(val id: String, val name: String)
 
