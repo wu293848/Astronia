@@ -3,7 +3,6 @@ package com.antoniegil.astronia.util.parser
 import com.antoniegil.astronia.util.NetworkUtils
 import com.antoniegil.astronia.util.common.PlayerConstants
 import com.antoniegil.astronia.util.common.Result
-import com.antoniegil.astronia.util.manager.EpgManager
 import com.antoniegil.astronia.util.manager.toM3U8Channel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,17 +44,8 @@ object M3ULoader {
     
     suspend fun parseM3U8(content: String): Result<List<M3U8Channel>> = withContext(Dispatchers.IO) {
         try {
-            val (channels, epgUrl) = M3UParser.parse(content)
-            val m3u8Channels = channels.map { it.toM3U8Channel() }
-            
-            if (epgUrl != null && channels.isNotEmpty()) {
-                EpgManager.loadEpg(channels, epgUrl, client) { channelsWithEpg ->
-                    val updatedChannels = channelsWithEpg.map { it.toM3U8Channel() }
-                    epgCallback?.invoke(updatedChannels)
-                }
-            }
-            
-            Result.Success(m3u8Channels)
+            val (channels, _) = M3UParser.parse(content)
+            Result.Success(channels.map { it.toM3U8Channel().copy(logoUrl = "", epgTitle = "", epgPrograms = emptyList()) })
         } catch (e: Exception) {
             Result.Error(e, "Failed to parse M3U8 content")
         }
@@ -130,7 +120,6 @@ object M3ULoader {
     
     fun clearEpgLoadedCallback() {
         epgCallback = null
-        EpgManager.clear()
     }
     
     private fun M3UChannel.toM3U8Channel() = M3U8Channel(
@@ -138,7 +127,7 @@ object M3ULoader {
         name = name,
         url = url,
         group = group,
-        logoUrl = logoUrl,
+        logoUrl = "",
         relationId = relationId,
         licenseType = licenseType,
         licenseKey = licenseKey

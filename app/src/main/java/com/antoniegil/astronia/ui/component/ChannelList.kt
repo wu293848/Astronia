@@ -296,12 +296,6 @@ fun ChannelItem(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        if (channel.logoUrl.isNotEmpty()) {
-                            ChannelLogo(
-                                logoUrl = channel.logoUrl,
-                                contentDescription = channel.name
-                            )
-                        }
                         Text(
                             text = channel.name,
                             style = MaterialTheme.typography.titleMedium,

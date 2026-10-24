@@ -118,7 +118,6 @@ private fun PlayerPageContent(
     val isFullscreen = uiState.isFullscreen
     val listState = rememberLazyListState()
     var showPlayerSettings by remember { mutableStateOf(false) }
-    var showEpgSidebar by remember { mutableStateOf(false) }
     
     val gestureState = rememberGestureControlState(context, activity)
     
@@ -446,9 +445,7 @@ private fun PlayerPageContent(
                                 { showPlayerSettings = true }
                             }
                             
-                            val onEpgClick = remember {
-                                { showEpgSidebar = !showEpgSidebar }
-                            }
+                            val onEpgClick = remember { {} }
                             
                             androidx.compose.animation.AnimatedVisibility(
                                 visible = uiState.showControls && !isInPictureInPictureMode,
@@ -473,8 +470,8 @@ private fun PlayerPageContent(
                                     isLocked = uiState.isLocked,
                                     onLockChange = { viewModel.setLocked(it) },
                                     onEpgClick = onEpgClick,
-                                    hasEpgData = uiState.channels.find { it.url == uiState.currentChannelUrl }?.epgPrograms?.isNotEmpty() == true,
-                                    epgPrograms = uiState.channels.find { it.url == uiState.currentChannelUrl }?.epgPrograms ?: emptyList()
+                                    hasEpgData = false,
+                                    epgPrograms = emptyList()
                                 )
                             }
 
@@ -491,14 +488,6 @@ private fun PlayerPageContent(
                             )
                         }
                         
-                        if (isFullscreen) {
-                            val currentChannel = uiState.channels.find { it.url == uiState.currentChannelUrl }
-                            EpgSidebar(
-                                visible = showEpgSidebar,
-                                programs = currentChannel?.epgPrograms ?: emptyList(),
-                                onDismiss = { showEpgSidebar = false }
-                            )
-                        }
                     }
                 }
 

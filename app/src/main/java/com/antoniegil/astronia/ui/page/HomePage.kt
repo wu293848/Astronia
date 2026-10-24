@@ -40,6 +40,7 @@ import kotlinx.coroutines.launch
 fun HomePage(
     onNavigateToSettings: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
+    onNavigateToProviders: () -> Unit = {},
     onPlayUrl: (String) -> Unit = {},
     onPlayHistoryItem: (HistoryItem) -> Unit = {}
 ) {
@@ -87,6 +88,12 @@ fun HomePage(
                         }
                     },
                     actions = {
+                        IconButton(onClick = {
+                            view.slightHapticFeedback()
+                            onNavigateToProviders()
+                        }) {
+                            Icon(Icons.Outlined.VideoLibrary, contentDescription = "IPTV providers")
+                        }
                         IconButton(onClick = {
                             view.slightHapticFeedback()
                             onNavigateToHistory()

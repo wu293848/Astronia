@@ -165,6 +165,9 @@ fun MainScreen(initialNavigation: String = "", viewModel: MainViewModel = viewMo
                                 popUpTo(Route.HOME)
                             }
                         },
+                        onNavigateToProviders = {
+                            navController.navigate(Route.PROVIDERS) { launchSingleTop = true }
+                        },
                         onPlayUrl = { url ->
                             viewModel.startPlayback(url)
                             navController.navigate(Route.PLAYER) { launchSingleTop = true }
@@ -173,6 +176,16 @@ fun MainScreen(initialNavigation: String = "", viewModel: MainViewModel = viewMo
                             viewModel.startPlaybackFromHistory(historyItem)
                             navController.navigate(Route.PLAYER) { launchSingleTop = true }
                         }
+                )
+            }
+
+            animatedComposable(Route.PROVIDERS) {
+                ProviderLibraryPage(
+                    onBack = onNavigateBack,
+                    onPlayUrl = { url, title ->
+                        viewModel.startPlayback(url, videoTitle = title)
+                        navController.navigate(Route.PLAYER) { launchSingleTop = true }
+                    }
                 )
             }
 

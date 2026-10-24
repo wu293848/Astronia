@@ -2,6 +2,7 @@ package com.antoniegil.astronia.ui.common
 
 object Route {
     const val HOME = "home"
+    const val PROVIDERS = "providers"
     const val HISTORY = "history"
     const val PLAYER = "player"
     const val CHANNEL_EDIT = "channel_edit"
